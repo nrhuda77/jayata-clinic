@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Jayata Clinic - Patient Booking System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bs-primary: #004c40;
+            --bs-primary-rgb: 0, 76, 64;
+            --bs-primary-hover: #00332b;
+            --teal-bg-light: #f0f4f3;
+            --teal-border: #b0efde;
+            --outline-color: #707976;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8faf7;
+            color: #191c1b;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--bs-primary-hover);
+            border-color: var(--bs-primary-hover);
+        }
+
+        .text-primary-teal {
+            color: var(--bs-primary) !important;
+        }
+
+        .bg-primary-light {
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+        }
+
+        .navbar {
+            border-bottom: 1px solid #dee2e6;
+            background-color: #ffffff;
+        }
+
+        .sidebar {
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            min-height: calc(100vh - 56px);
+        }
+
+        .booking-summary {
+            border-left: 1px solid #dee2e6;
+            background-color: #ffffff;
+            min-height: calc(100vh - 56px);
+        }
+
+        .nav-progress-item {
+            padding: 0.75rem 1rem;
+            color: var(--outline-color);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-progress-item.active {
+            color: var(--bs-primary);
+            background-color: #e6eeed;
+            border-left: 4px solid var(--bs-primary);
+        }
+
+        .service-card {
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+
+        .service-card.selected {
+            border: 2px solid var(--bs-primary);
+            background-color: #ffffff;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .step-number-fill {
+            background-color: var(--bs-primary);
+            color: white;
+        }
+
+        .step-number-outline {
+            border: 2px solid var(--bs-primary);
+            color: var(--bs-primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            padding: 8px;
+            font-size: 0.875rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .calendar-day:hover:not(.muted) {
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+        }
+
+        .calendar-day.active {
+            background-color: var(--bs-primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.muted {
+            color: #adb5bd;
+            cursor: default;
+        }
+
+        .material-symbols-outlined {
+            vertical-align: middle;
+            font-size: 1.25rem;
+        }
+
+        .card-img-overlay-custom {
+            background: linear-gradient(to top, rgba(0, 76, 64, 0.8), transparent);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+        }
+
+        .sticky-top-offset {
+            top: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-xl">
+            <a class="navbar-brand text-primary-teal fw-bold font-headline fs-4" href="#">Jayata Clinic</a>
+            <button class="navbar-toggler" data-bs-target="#navbarMain" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <!-- <li class="nav-item"><a class="nav-link px-3 fw-medium" href="#">Find Care</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 fw-medium" href="#">Our Services</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 fw-medium" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 fw-medium" href="#">Contact</a></li> -->
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-link text-secondary p-0"><span
+                            class="material-symbols-outlined">notifications</span></button>
+                    <button class="btn btn-link text-secondary p-0"><span
+                            class="material-symbols-outlined">help</span></button>
+                    <a href="landing_page.html" class="btn btn-primary px-4 fw-semibold">Kembali Ke Beranda</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-xl">
+        <div class="row g-0">
+            <!-- Sidebar Navigation -->
+            <aside class="col-lg-3 sidebar d-none d-lg-block p-4">
+                <div class="d-flex align-items-center gap-3 mb-5">
+                    <div class="bg-primary-teal p-2 rounded bg-primary-light">
+                        <span class="material-symbols-outlined text-primary-teal"
+                            style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold font-headline">Booking Progress</h6>
+                        <small class="text-muted">Step-by-step registration</small>
+                    </div>
+                </div>
+                <nav class="nav flex-column gap-1 mb-5">
+                    <a class="nav-progress-item active" href="#">
+                        <span class="material-symbols-outlined">medical_services</span> Service Selection
+                    </a>
+                    <a class="nav-progress-item" href="#">
+                        <span class="material-symbols-outlined">calendar_month</span> Schedule
+                    </a>
+                    <a class="nav-progress-item" href="#">
+                        <span class="material-symbols-outlined">person</span> Patient Info
+                    </a>
+                    <a class="nav-progress-item" href="#">
+                        <span class="material-symbols-outlined">visibility</span> Review
+                    </a>
+                    <a class="nav-progress-item" href="#">
+                        <span class="material-symbols-outlined">check_circle</span> Confirmation
+                    </a>
+                </nav>
+                <div class="card border-0 bg-primary-light p-3 rounded-4 mt-auto">
+                    <h6 class="text-primary-teal fw-bold mb-2">Need Help?</h6>
+                    <p class="small text-muted mb-3">Our support team is available 24/7 for urgent care bookings.</p>
+                    <button class="btn btn-outline-primary btn-sm fw-bold w-100">Call Support</button>
+                </div>
+            </aside>
+            <!-- Main Content -->
+            <main class="col-lg-6 p-4 p-md-5">
+                <header class="mb-5">
+                    <h1 class="display-5 text-primary-teal">Book Your Appointment</h1>
+                    <p class="text-muted">Select your required medical service to begin your clinical journey with
+                        Jayata.</p>
+                    <div class="progress mt-4" style="height: 8px;">
+                        <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="33" class="progress-bar"
+                            role="progressbar" style="width: 33.33%; background-color: var(--bs-primary);"></div>
+                    </div>
+                </header>
+                <!-- Step 1: Select Service -->
+                <section class="mb-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="step-number step-number-fill">1</span>
+                        <h2 class="h4 mb-0 text-primary-teal">Select Service</h2>
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 service-card selected rounded-4 p-3 shadow-sm">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-primary-light p-2 rounded text-primary-teal">
+                                        <span class="material-symbols-outlined fs-2">psychology</span>
+                                    </div>
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                        style="width:24px; height:24px;">
+                                        <span class="material-symbols-outlined fs-6 fw-bold">check</span>
+                                    </div>
+                                </div>
+                                <h5 class="fw-bold text-primary-teal mb-1">Nerve Therapy</h5>
+                                <p class="small text-muted mb-4">Comprehensive treatment for neural pathways and nervous
+                                    system disorders.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <span class="fw-bold text-primary-teal">$45.00</span>
+                                    <span class="small fw-bold text-primary-teal text-uppercase">60 mins</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 service-card rounded-4 p-3 border-light-subtle">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-light p-2 rounded text-secondary">
+                                        <span class="material-symbols-outlined fs-2">orthopedics</span>
+                                    </div>
+                                    <div class="rounded-circle border border-2" style="width:24px; height:24px;"></div>
+                                </div>
+                                <h5 class="fw-bold mb-1">Bone Therapy</h5>
+                                <p class="small text-muted mb-4">Specialized care for skeletal health, alignment, and
+                                    bone density recovery.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <span class="fw-bold">$45.00</span>
+                                    <span class="small fw-bold text-muted text-uppercase">45 mins</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase mb-2">Other Clinical
+                            Services</label>
+                        <select class="form-select form-select-lg py-3 fs-6">
+                            <option>General Consultation</option>
+                            <option>Cardiovascular Screening</option>
+                            <option>Dermatological Exam</option>
+                            <option>Wellness Checkup</option>
+                        </select>
+                    </div>
+                </section>
+                <!-- Step 2: Date & Time -->
+                <section class="mb-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="step-number step-number-outline">2</span>
+                        <h2 class="h4 mb-0 text-primary-teal">Choose Date &amp; Time</h2>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="card border rounded-4 p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="fw-bold text-primary-teal mb-0">October 2023</h6>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-light btn-sm"><span
+                                                class="material-symbols-outlined">chevron_left</span></button>
+                                        <button class="btn btn-light btn-sm"><span
+                                                class="material-symbols-outlined">chevron_right</span></button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid mb-2">
+                                    <div class="small fw-bold text-muted">S</div>
+                                    <div class="small fw-bold text-muted">M</div>
+                                    <div class="small fw-bold text-muted">T</div>
+                                    <div class="small fw-bold text-muted">W</div>
+                                    <div class="small fw-bold text-muted">T</div>
+                                    <div class="small fw-bold text-muted">F</div>
+                                    <div class="small fw-bold text-muted">S</div>
+                                </div>
+                                <div class="calendar-grid">
+                                    <div class="calendar-day muted">28</div>
+                                    <div class="calendar-day muted">29</div>
+                                    <div class="calendar-day muted">30</div>
+                                    <div class="calendar-day">1</div>
+                                    <div class="calendar-day">2</div>
+                                    <div class="calendar-day">3</div>
+                                    <div class="calendar-day">4</div>
+                                    <div class="calendar-day">5</div>
+                                    <div class="calendar-day">6</div>
+                                    <div class="calendar-day">7</div>
+                                    <div class="calendar-day">8</div>
+                                    <div class="calendar-day">9</div>
+                                    <div class="calendar-day">10</div>
+                                    <div class="calendar-day">11</div>
+                                    <div class="calendar-day active">12</div>
+                                    <div class="calendar-day">13</div>
+                                    <div class="calendar-day">14</div>
+                                    <div class="calendar-day">15</div>
+                                    <div class="calendar-day">16</div>
+                                    <div class="calendar-day">17</div>
+                                    <div class="calendar-day">18</div>
+                                    <div class="calendar-day">19</div>
+                                    <div class="calendar-day">20</div>
+                                    <div class="calendar-day">21</div>
+                                    <div class="calendar-day">22</div>
+                                    <div class="calendar-day">23</div>
+                                    <div class="calendar-day">24</div>
+                                    <div class="calendar-day">25</div>
+                                    <div class="calendar-day">26</div>
+                                    <div class="calendar-day">27</div>
+                                    <div class="calendar-day">28</div>
+                                    <div class="calendar-day">29</div>
+                                    <div class="calendar-day">30</div>
+                                    <div class="calendar-day">31</div>
+                                    <div class="calendar-day muted">1</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <h6 class="fw-bold text-primary-teal mb-3 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined fs-5">schedule</span> Available Slots (Oct 12)
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6"><button
+                                        class="btn btn-outline-secondary w-100 py-3 small fw-semibold">09:00 AM</button>
+                                </div>
+                                <div class="col-6"><button class="btn btn-primary w-100 py-3 small fw-bold">10:30
+                                        AM</button></div>
+                                <div class="col-6"><button
+                                        class="btn btn-outline-secondary w-100 py-3 small fw-semibold">11:00 AM</button>
+                                </div>
+                                <div class="col-6"><button
+                                        class="btn btn-outline-secondary w-100 py-3 small fw-semibold">01:30 PM</button>
+                                </div>
+                                <div class="col-6"><button
+                                        class="btn btn-outline-secondary w-100 py-3 small fw-semibold">03:00 PM</button>
+                                </div>
+                                <div class="col-6"><button
+                                        class="btn btn-outline-secondary w-100 py-3 small fw-semibold">04:30 PM</button>
+                                </div>
+                            </div>
+                            <p class="small text-muted fst-italic mt-3" style="font-size: 0.75rem;">Timezone:
+                                Asia/Jakarta (GMT+7)</p>
+                        </div>
+                    </div>
+                </section>
+                <!-- Step 3: Patient Information -->
+                <section class="mb-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="step-number step-number-outline">3</span>
+                        <h2 class="h4 mb-0 text-primary-teal">Patient Information</h2>
+                    </div>
+                    <div class="card border rounded-4 p-4">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Full Name</label>
+                                <input class="form-control py-3" placeholder="e.g. John Doe" type="text" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Phone Number</label>
+                                <input class="form-control py-3" placeholder="+1 (555) 000-0000" type="tel" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Email Address</label>
+                                <input class="form-control py-3" placeholder="john.doe@example.com" type="email" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Brief Complaint /
+                                    Symptoms</label>
+                                <textarea class="form-control py-3"
+                                    placeholder="Please describe what you are feeling..." rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            <!-- Booking Summary Sidebar -->
+            <aside class="col-lg-3 booking-summary p-4">
+                <div class="sticky-top sticky-top-offset">
+                    <h4 class="text-primary-teal mb-4">Booking Summary</h4>
+                    <div class="d-flex flex-column gap-4">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-primary-light p-2 rounded text-primary-teal">
+                                <span class="material-symbols-outlined">medical_services</span>
+                            </div>
+                            <div>
+                                <div class="small fw-bold text-muted text-uppercase" style="font-size: 0.65rem;">
+                                    Selected Service</div>
+                                <div class="fw-bold">Nerve Therapy</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-primary-light p-2 rounded text-primary-teal">
+                                <span class="material-symbols-outlined">calendar_today</span>
+                            </div>
+                            <div>
+                                <div class="small fw-bold text-muted text-uppercase" style="font-size: 0.65rem;">Date
+                                    &amp; Time</div>
+                                <div class="fw-bold">Thursday, Oct 12, 2023</div>
+                                <div class="text-primary-teal fw-bold small">10:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-primary-light p-2 rounded text-primary-teal">
+                                <span class="material-symbols-outlined">location_on</span>
+                            </div>
+                            <div>
+                                <div class="small fw-bold text-muted text-uppercase" style="font-size: 0.65rem;">Clinic
+                                    Location</div>
+                                <div class="fw-bold">Jayata Central Clinic</div>
+                                <div class="small text-muted">Building B, Level 4, Medical Plaza</div>
+                            </div>
+                        </div>
+                        <hr class="my-2 border-light-subtle" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Consultation Fee</span>
+                            <span class="fw-bold">$45.00</span>
+                        </div>
+                        <div class="bg-primary-light p-4 rounded-4 border border-primary-subtle text-center">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="h5 mb-0 fw-bold text-primary-teal">Total Fee</span>
+                                <span class="h4 mb-0 fw-bold text-primary-teal">$45.00</span>
+                            </div>
+                            <p class="mb-0 text-muted" style="font-size: 0.7rem;">Fees include basic examination and
+                                digital medical records access.</p>
+                        </div>
+                        <button class="btn btn-primary w-100 py-3 rounded-3 fw-bold fs-5 shadow">Confirm
+                            Booking</button>
+                        <p class="text-center text-muted mt-3" style="font-size: 0.75rem;">
+                            By clicking "Confirm Booking", you agree to our
+                            <a class="text-primary-teal fw-bold" href="#">Terms</a> and
+                            <a class="text-primary-teal fw-bold" href="#">Privacy Policy</a>.
+                        </p>
+                        <div class="card border-0 rounded-4 overflow-hidden position-relative mt-4"
+                            style="height: 120px;">
+                            <img alt="Clinic Interior" class="w-100 h-100 object-fit-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYeLojGVDKVTG_aWVLVC6N31-KIy9rfCO2wPdLr6gWFBmGG35oe8oWeXploOM21d9mUCjzgc1mC9yk0W01aCjCFuq5R5XWyF2WhoiJi0hUx46Hz_qLY1-0maZbmD5i5VvzjW_lPRGmjS5z8NNAyaHkYiBKNCXqWBMX0_qq0ffBTuDKm2kktc7Rr8IDHubuGrGNGVREP3Z705WThLN7ffAhwwl3NKRwrDupIWaZgCLL0VRc-L19OqlawVA4J9omOFgx_kgJznpBnqeZ" />
+                            <div class="card-img-overlay-custom">
+                                <p class="text-white mb-0 small fw-bold">Premium Care Standards</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-top py-5 mt-5">
+        <div class="container-xl">
+            <div class="row align-items-center justify-content-between gap-4">
+                <div class="col-md-auto">
+                    <div class="h5 fw-bold text-primary-teal mb-0 font-headline">Jayata Clinic</div>
+                </div>
+                <div class="col-md-auto text-muted small">
+                    © 2024 Jayata Clinic. All rights reserved.
+                </div>
+                <div class="col-md-auto">
+                    <div class="d-flex gap-4">
+                        <a class="text-muted text-decoration-none small" href="#">Privacy Policy</a>
+                        <a class="text-muted text-decoration-none small" href="#">Terms of Service</a>
+                        <a class="text-muted text-decoration-none small" href="#">Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
