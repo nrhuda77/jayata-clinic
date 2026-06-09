@@ -3,7 +3,7 @@ export default function handler(req, res) {
         {
             id: 1,
             tanggal: "2026-01-01",
-            nama: "Tahun Baru Masehi"
+            nama: "Tahun Baru Masehia"
         },
         {
             id: 2,
